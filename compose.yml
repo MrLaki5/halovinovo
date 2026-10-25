@@ -1,0 +1,60 @@
+# Docker's json-file driver never rotates by default, so cap each container at 50 MB
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  db:
+    container_name: halovinovo_db
+    logging: *logging
+    build: ./db
+    restart: always
+    expose:
+     - 5432
+    environment:
+     - POSTGRES_PASSWORD=postgres
+     - PGDATA=/var/lib/postgresql/data
+    volumes:
+       - ./db_persist_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d halovinovo"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    container_name: halovinovo_app
+    logging: *logging
+    build: ./app
+    restart: always
+    expose:
+      - 8013
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - ADMIN_USERNAME=${ADMIN_USERNAME:?not set - copy .example.env to .env and fill it in}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:?not set - copy .example.env to .env and fill it in}
+      - SESSION_SECRET_KEY=${SESSION_SECRET_KEY:?not set - copy .example.env to .env and fill it in}
+    volumes:
+      - ./uploads:/app/uploads
+
+  nginx:
+    container_name: halovinovo_nginx
+    logging: *logging
+    build: ./nginx
+    depends_on:
+     - app
+    restart: always
+    ports:
+      - 443:443
+      - 80:80
+    environment:
+      - PROD=${PROD:-false}
+    volumes:
+      - ./certificates:/etc/letsencrypt
+      - ./webroot:/var/www/certbot
+      # Mask photos, served straight from disk
+      - ./uploads:/var/www/uploads:ro

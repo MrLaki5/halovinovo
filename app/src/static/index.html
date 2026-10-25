@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14101A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23FF7A1A%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M3 8c3-2 6-2 9 0 3-2 6-2 9 0 0 5-2 9-5 9-2 0-3-2-4-2s-2 2-4 2c-3 0-5-4-5-9z%27/%3E%3Cpath d=%27M7.5 10.5h2M14.5 10.5h2%27/%3E%3C/svg%3E">
+<title>Halovinovo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+<script type="module" src="/static/js/guest.js"></script>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF7A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8c3-2 6-2 9 0 3-2 6-2 9 0 0 5-2 9-5 9-2 0-3-2-4-2s-2 2-4 2c-3 0-5-4-5-9z"></path><path d="M7.5 10.5h2M14.5 10.5h2"></path></svg>
+        <span class="brand-name" data-party-name>Halovinovo</span>
+      </div>
+      <div id="timer-pill" class="pill pill-timer" role="timer" hidden>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF9A4D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        <span class="mono" id="timer-text"></span>
+      </div>
+      <span id="phase-pill" class="pill" hidden></span>
+    </div>
+  </header>
+
+  <!-- Round 1: check-in and voting -->
+  <main id="view-vote" class="container" hidden>
+    <section class="intro">
+      <span class="eyebrow">Round 1 · Everyone votes</span>
+      <h1 class="title" id="vote-title">Pick your three best costumes</h1>
+      <p class="lead" id="vote-lead"></p>
+    </section>
+    <p id="vote-error" class="status is-error" role="alert" hidden></p>
+    <p id="vote-empty" class="empty" hidden>No masks yet. The host adds each costume as guests arrive.</p>
+    <section aria-label="Costumes" class="mask-grid" id="mask-grid"></section>
+  </main>
+  <div id="vote-bar" class="bottom-bar" hidden>
+    <div class="bottom-bar-inner">
+      <div class="bottom-bar-row">
+        <span id="vote-summary" aria-live="polite"></span>
+        <div class="pips" id="pips" role="img"></div>
+      </div>
+      <button type="button" class="btn btn-primary" id="lock-btn" disabled>Lock in my votes</button>
+    </div>
+  </div>
+
+  <!-- Round 2: finalists -->
+  <main id="view-final" class="container" hidden>
+    <section class="intro">
+      <span class="eyebrow">Round 2 · Live final</span>
+      <h1 class="title" id="final-title"></h1>
+      <p class="lead">Thanks for voting. Finalists, head to the stage — the winner is decided live.</p>
+    </section>
+    <ol aria-label="Finalists" class="finalist-list" id="finalist-list"></ol>
+    <section class="notice">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4h4l5 4V6L7 10z"></path><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></svg>
+      <p>Winners appear here once the host announces them.</p>
+    </section>
+  </main>
+
+  <!-- Podium -->
+  <main id="view-winners" class="container" hidden>
+    <section class="intro center">
+      <span class="eyebrow" id="winners-eyebrow">Best costume</span>
+      <h1 class="title title-lg">And the winners are…</h1>
+    </section>
+    <div class="podium" id="podium"></div>
+    <p class="thanks">Thanks to every mask that showed up tonight.</p>
+  </main>
+</div>
+</body>
+</html>

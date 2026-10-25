@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14101A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23FF7A1A%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M3 8c3-2 6-2 9 0 3-2 6-2 9 0 0 5-2 9-5 9-2 0-3-2-4-2s-2 2-4 2c-3 0-5-4-5-9z%27/%3E%3Cpath d=%27M7.5 10.5h2M14.5 10.5h2%27/%3E%3C/svg%3E">
+<title>Host login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+<script type="module" src="/static/js/login.js"></script>
+</head>
+<body>
+<div class="login">
+  <form id="login-form" novalidate>
+    <div class="login-head">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FF7A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8c3-2 6-2 9 0 3-2 6-2 9 0 0 5-2 9-5 9-2 0-3-2-4-2s-2 2-4 2c-3 0-5-4-5-9z"></path><path d="M7.5 10.5h2M14.5 10.5h2"></path></svg>
+      <h1 class="title">Host login</h1>
+      <p class="lead">Only the host signs in. Guests vote without an account.</p>
+    </div>
+    <div class="login-fields">
+      <div class="field">
+        <label for="username" class="field-label">Username</label>
+        <input id="username" class="input" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required>
+      </div>
+      <div class="field">
+        <label for="password" class="field-label">Password</label>
+        <input id="password" class="input" type="password" autocomplete="current-password" required>
+      </div>
+    </div>
+    <p id="login-status" class="status is-error" hidden></p>
+    <button type="submit" class="btn btn-primary">Sign in</button>
+  </form>
+</div>
+</body>
+</html>

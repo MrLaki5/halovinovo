@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin · Announce winners</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14101A;color:#F2EADF;font-family:'Bricolage Grotesque',system-ui,sans-serif}
+a{color:#FF9A4D}a:hover{color:#FFB880}
+input,button,select{font-family:inherit}
+input:focus-visible,button:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #FF9A4D;outline-offset:2px}
+.ph{background:repeating-linear-gradient(135deg,#231C2C 0 8px,#1C1724 8px 16px)}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #14101A; display: flex; flex-direction: column">
+  <header style="position: sticky; top: 0; z-index: 5; background: #14101A; border-bottom: 1px solid #2E2638">
+    <div style="max-width: 480px; margin: 0 auto; padding: 8px 8px 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 10px; min-width: 0">
+        <span style="font-weight: 800; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Halovinovo</span>
+        <span style="flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; background: #2A2133; color: #FF9A4D">Host</span>
+      </div>
+      <a href="Admin-Login.dc.html" aria-label="Log out" style="flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"></path></svg>
+      </a>
+    </div>
+  </header>
+
+  <main style="flex: 1; width: 100%; max-width: 480px; margin: 0 auto; padding: 20px 16px 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Announce the winners</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #B5ABC1">After the live final, pick each place and add the winner's name. Publishing shows the podium to every guest.</p>
+    </div>
+
+    <form style="display: flex; flex-direction: column; gap: 12px">
+      <fieldset style="margin: 0; padding: 16px; border-radius: 16px; border: 2px solid #FF7A1A; background: #1E1826; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+        <legend style="padding: 0 6px; font-size: 15px; font-weight: 800; color: #FF9A4D">1st place</legend>
+        <div style="display: flex; gap: 12px; align-items: flex-end">
+          <div class="ph" style="width: 54px; height: 72px; border-radius: 8px; flex: none"></div>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+            <label for="m1" style="font-size: 13px; font-weight: 600">Mask</label>
+            <select id="m1" style="width: 100%; min-height: 50px; padding: 0 12px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px; color-scheme: dark"><option>#07</option><option>#02</option><option>#11</option><option>#04</option><option>#09</option></select>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="n1" style="font-size: 13px; font-weight: 600">Winner's name</label>
+          <input id="n1" type="text" placeholder="Name" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="c1" style="font-size: 13px; font-weight: 600">Costume title <span style="font-weight: 400; color: #B5ABC1">(optional)</span></label>
+          <input id="c1" type="text" placeholder="e.g. Plague doctor" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px">
+        </div>
+      </fieldset>
+
+      <fieldset style="margin: 0; padding: 16px; border-radius: 16px; border: 1px solid #4A3F57; background: #1E1826; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+        <legend style="padding: 0 6px; font-size: 15px; font-weight: 800; color: #D9CFC2">2nd place</legend>
+        <div style="display: flex; gap: 12px; align-items: flex-end">
+          <div class="ph" style="width: 54px; height: 72px; border-radius: 8px; flex: none"></div>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+            <label for="m2" style="font-size: 13px; font-weight: 600">Mask</label>
+            <select id="m2" style="width: 100%; min-height: 50px; padding: 0 12px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px; color-scheme: dark"><option>#02</option><option>#07</option><option>#11</option><option>#04</option><option>#09</option></select>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="n2" style="font-size: 13px; font-weight: 600">Winner's name</label>
+          <input id="n2" type="text" placeholder="Name" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="c2" style="font-size: 13px; font-weight: 600">Costume title <span style="font-weight: 400; color: #B5ABC1">(optional)</span></label>
+          <input id="c2" type="text" placeholder="e.g. Plague doctor" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px">
+        </div>
+      </fieldset>
+
+      <fieldset style="margin: 0; padding: 16px; border-radius: 16px; border: 1px solid #4A3F57; background: #1E1826; display: flex; flex-direction: column; gap: 12px; min-width: 0">
+        <legend style="padding: 0 6px; font-size: 15px; font-weight: 800; color: #D9A27A">3rd place</legend>
+        <div style="display: flex; gap: 12px; align-items: flex-end">
+          <div class="ph" style="width: 54px; height: 72px; border-radius: 8px; flex: none"></div>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px">
+            <label for="m3" style="font-size: 13px; font-weight: 600">Mask</label>
+            <select id="m3" style="width: 100%; min-height: 50px; padding: 0 12px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px; color-scheme: dark"><option>#11</option><option>#07</option><option>#02</option><option>#04</option><option>#09</option></select>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="n3" style="font-size: 13px; font-weight: 600">Winner's name</label>
+          <input id="n3" type="text" placeholder="Name" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <label for="c3" style="font-size: 13px; font-weight: 600">Costume title <span style="font-weight: 400; color: #B5ABC1">(optional)</span></label>
+          <input id="c3" type="text" placeholder="e.g. Plague doctor" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px">
+        </div>
+      </fieldset>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 6px">
+        <button type="submit" style="width: 100%; min-height: 52px; border-radius: 14px; border: none; background: #FF7A1A; color: #1A0F05; font-size: 17px; font-weight: 700; cursor: pointer">Publish winners</button>
+        <a href="Winners.dc.html" style="min-height: 52px; display: flex; align-items: center; justify-content: center; border-radius: 14px; border: 1px solid #4A3F57; color: #F2EADF; text-decoration: none; font-size: 17px; font-weight: 600">Preview podium</a>
+      </div>
+    </form>
+  </main>
+
+  <nav aria-label="Admin" style="position: sticky; bottom: 0; z-index: 5; background: #1E1826; border-top: 1px solid #3A3046">
+    <div style="max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+      <a href="Admin-Entries.dc.html" style="min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #B5ABC1; font-size: 12px; font-weight: 600">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+        Check-in
+      </a>
+      <a href="Admin-Settings.dc.html" style="min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #B5ABC1; font-size: 12px; font-weight: 600">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg>
+        Settings
+      </a>
+      <a href="Admin-Winners.dc.html" aria-current="page" style="min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #FF9A4D; font-size: 12px; font-weight: 700">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9A4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"></path><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6"></path></svg>
+        Winners
+      </a>
+    </div>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1560}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

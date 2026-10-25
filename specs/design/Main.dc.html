@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Vote for the best costume</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14101A;color:#F2EADF;font-family:'Bricolage Grotesque',system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+a{color:#FF9A4D}a:hover{color:#FFB880}
+button{font-family:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible{outline:3px solid #FF9A4D;outline-offset:3px}
+button:disabled{cursor:not-allowed}
+.ph{background:repeating-linear-gradient(135deg,#231C2C 0 12px,#1C1724 12px 24px)}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #14101A; display: flex; flex-direction: column">
+  <header style="position: sticky; top: 0; z-index: 5; background: #14101A; border-bottom: 1px solid #2E2638">
+    <div style="max-width: 480px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 10px; min-width: 0">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF7A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M3 8c3-2 6-2 9 0 3-2 6-2 9 0 0 5-2 9-5 9-2 0-3-2-4-2s-2 2-4 2c-3 0-5-4-5-9z"></path><path d="M7.5 10.5h2M14.5 10.5h2"></path></svg>
+        <span style="font-weight: 800; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Halovinovo</span>
+      </div>
+      <div style="flex: none; display: flex; align-items: center; gap: 6px; padding: 7px 12px; border: 1px solid #3A3046; border-radius: 999px" aria-label="Voting closes in {{clock}}" role="timer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF9A4D" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        <span style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 15px">{{clock}}</span>
+      </div>
+    </div>
+  </header>
+
+  <main style="flex: 1; width: 100%; max-width: 480px; margin: 0 auto; padding: 24px 16px 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+    <section style="display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #FF9A4D">Round 1 · Everyone votes</span>
+      <h1 style="margin: 0; font-size: 34px; line-height: 1; font-weight: 800; letter-spacing: -0.03em">Pick your three best costumes</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #B5ABC1">Tap up to three masks. When the timer runs out, the top {{finalists}} go to the live final on stage.</p>
+    </section>
+
+    <section aria-label="Costumes" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+      <sc-for list="{{masks}}" as="m" hint-placeholder-count="12">
+        <article style="{{m.cardStyle}}">
+          <div class="ph" style="position: relative; aspect-ratio: 3 / 4; display: flex; align-items: center; justify-content: center">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5E5269" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+            <span style="position: absolute; top: 8px; left: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 700; padding: 3px 7px; border-radius: 6px; background: #14101A; color: #F2EADF">#{{m.num}}</span>
+            <sc-if value="{{m.voted}}" hint-placeholder-val="{{false}}">
+              <span style="position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; border-radius: 999px; background: #FF7A1A; display: flex; align-items: center; justify-content: center">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1A0F05" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+              </span>
+            </sc-if>
+          </div>
+          <div style="padding: 10px; display: flex; flex-direction: column; gap: 8px">
+            <sc-if value="{{showCounts}}" hint-placeholder-val="{{true}}">
+              <span style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+                <span style="font-family: 'JetBrains Mono', monospace; font-size: 17px; font-weight: 700; color: #F2EADF">{{m.count}}</span>
+                <span style="font-size: 13px; color: #B5ABC1">votes</span>
+              </span>
+            </sc-if>
+            <button type="button" onClick="{{m.toggle}}" disabled="{{m.disabled}}" aria-pressed="{{m.voted}}" aria-label="{{m.aria}}" style="{{m.btnStyle}}">{{m.label}}</button>
+          </div>
+        </article>
+      </sc-for>
+    </section>
+  </main>
+
+  <div style="position: sticky; bottom: 0; z-index: 5; background: #1E1826; border-top: 1px solid #3A3046">
+    <div style="max-width: 480px; margin: 0 auto; padding: 12px 16px 16px; display: flex; flex-direction: column; gap: 10px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+        <span style="font-size: 14px; color: #F2EADF">{{footerText}}</span>
+        <div style="display: flex; gap: 6px" aria-label="{{votesLabel}}" role="img">
+          <sc-for list="{{pips}}" as="pip" hint-placeholder-count="3">
+            <span style="{{pip.style}}"></span>
+          </sc-for>
+        </div>
+      </div>
+      <button type="button" onClick="{{submit}}" disabled="{{cantSubmit}}" style="{{submitStyle}}">{{submitLabel}}</button>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"finalists":{"editor":"int","default":5,"min":2,"max":10},"maskCount":{"editor":"int","default":12,"min":3,"max":40},"showCounts":{"editor":"boolean","default":true},"$preview":{"width":390,"height":2700}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { votes: [2, 7], submitted: false, left: 42 * 60 + 17 };
+  }
+  componentDidMount() {
+    this.t = setInterval(() => this.setState({ left: Math.max(0, this.state.left - 1) }), 1000);
+  }
+  componentWillUnmount() { clearInterval(this.t); }
+  renderVals() {
+    const max = 3;
+    const votes = this.state.votes;
+    const done = this.state.submitted;
+    const full = votes.length >= max;
+    const n = this.props.maskCount ?? 12;
+    const pad = (x) => String(x).padStart(2, '0');
+    const l = this.state.left;
+    const base = [11, 20, 8, 16, 6, 3, 23, 5, 14, 9, 19, 11];
+    const masks = [];
+    for (let i = 1; i <= n; i++) {
+      const voted = votes.includes(i);
+      const disabled = done || (full && !voted);
+      masks.push({
+        num: pad(i),
+        count: base[(i - 1) % base.length] + (voted ? 1 : 0),
+        voted,
+        disabled,
+        aria: (voted ? 'Remove vote for mask ' : 'Vote for mask ') + i,
+        label: voted ? 'Voted' : (disabled ? 'Out of votes' : 'Vote'),
+        cardStyle: 'display:flex;flex-direction:column;border-radius:14px;overflow:hidden;background:#1E1826;border:2px solid ' + (voted ? '#FF7A1A' : '#2E2638') + ';opacity:' + (disabled && !voted ? '0.55' : '1'),
+        btnStyle: 'width:100%;min-height:44px;border-radius:10px;font-size:16px;font-weight:600;border:1px solid ' + (voted ? '#FF7A1A' : '#4A3F57') + ';background:' + (voted ? '#FF7A1A' : 'transparent') + ';color:' + (voted ? '#1A0F05' : '#F2EADF'),
+        toggle: () => {
+          if (done) return;
+          const v = this.state.votes;
+          if (v.includes(i)) this.setState({ votes: v.filter((x) => x !== i) });
+          else if (v.length < max) this.setState({ votes: v.concat(i) });
+        }
+      });
+    }
+    const pips = [0, 1, 2].map((k) => ({
+      style: 'width:18px;height:18px;border-radius:999px;' + (k < votes.length ? 'background:#FF7A1A;border:2px solid #FF7A1A' : 'background:transparent;border:2px solid #5E5269')
+    }));
+    const cant = done || votes.length === 0;
+    return {
+      clock: pad(Math.floor(l / 3600)) + ':' + pad(Math.floor((l % 3600) / 60)) + ':' + pad(l % 60),
+      finalists: this.props.finalists ?? 5,
+      showCounts: this.props.showCounts ?? true,
+      masks,
+      pips,
+      votesLabel: votes.length + ' of 3 votes used',
+      footerText: done ? 'Votes locked in. Watch for the finalists.' : (votes.length + ' of 3 picked' + (votes.length ? ' · #' + votes.map(pad).join(', #') : '')),
+      submitLabel: done ? 'Votes locked' : 'Lock in my votes',
+      cantSubmit: cant,
+      submitStyle: 'width:100%;min-height:52px;border-radius:14px;border:none;font-size:17px;font-weight:700;background:' + (cant ? '#3A3046' : '#FF7A1A') + ';color:' + (cant ? '#B5ABC1' : '#1A0F05'),
+      submit: () => this.setState({ submitted: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

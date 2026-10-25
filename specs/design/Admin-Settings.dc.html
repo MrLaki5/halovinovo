@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin · Contest settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14101A;color:#F2EADF;font-family:'Bricolage Grotesque',system-ui,sans-serif}
+a{color:#FF9A4D}a:hover{color:#FFB880}
+input,button{font-family:inherit}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #FF9A4D;outline-offset:2px}
+input[type=checkbox]{accent-color:#FF7A1A}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #14101A; display: flex; flex-direction: column">
+  <header style="position: sticky; top: 0; z-index: 5; background: #14101A; border-bottom: 1px solid #2E2638">
+    <div style="max-width: 480px; margin: 0 auto; padding: 8px 8px 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 10px; min-width: 0">
+        <span style="font-weight: 800; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Halovinovo</span>
+        <span style="flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; background: #2A2133; color: #FF9A4D">Host</span>
+      </div>
+      <a href="Admin-Login.dc.html" aria-label="Log out" style="flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"></path></svg>
+      </a>
+    </div>
+  </header>
+
+  <main style="flex: 1; width: 100%; max-width: 480px; margin: 0 auto; padding: 20px 16px 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <h1 style="margin: 0; font-size: 30px; font-weight: 800; letter-spacing: -0.02em">Contest settings</h1>
+      <p style="margin: 0; font-size: 15px; color: #B5ABC1">Name the party, set the timer and how many masks make the live final.</p>
+    </div>
+
+    <ol aria-label="Contest phases" style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px">
+      <li style="padding: 10px 8px; border-radius: 10px; background: #1E1826; border: 1px solid #2E2638; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B5ABC1">01 ✓</span>
+        <span style="font-size: 13px; font-weight: 700; color: #B5ABC1">Check-in</span>
+      </li>
+      <li aria-current="step" style="padding: 10px 8px; border-radius: 10px; background: #2A1A0E; border: 2px solid #FF7A1A; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #FF9A4D">02 now</span>
+        <span style="font-size: 13px; font-weight: 700">Voting</span>
+      </li>
+      <li style="padding: 10px 8px; border-radius: 10px; background: #1E1826; border: 1px solid #2E2638; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B5ABC1">03</span>
+        <span style="font-size: 13px; font-weight: 700">Final</span>
+      </li>
+      <li style="padding: 10px 8px; border-radius: 10px; background: #1E1826; border: 1px solid #2E2638; display: flex; flex-direction: column; gap: 2px">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #B5ABC1">04</span>
+        <span style="font-size: 13px; font-weight: 700">Winners</span>
+      </li>
+    </ol>
+
+    <form style="display: flex; flex-direction: column; border-radius: 16px; background: #1E1826; border: 1px solid #3A3046; overflow: hidden">
+      <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #2E2638">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <label for="pname" style="font-size: 16px; font-weight: 700">Party name</label>
+          <span style="font-size: 13px; color: #B5ABC1">Shown at the top of every guest screen.</span>
+        </div>
+        <input id="pname" type="text" value="Halovinovo" maxlength="40" style="width: 100%; box-sizing: border-box; min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px">
+      </div>
+      <div style="padding: 16px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid #2E2638">
+        <div style="display: flex; flex-direction: column; gap: 2px">
+          <label for="end" style="font-size: 16px; font-weight: 700">Voting closes at</label>
+          <span style="font-size: 13px; color: #B5ABC1">Guests see a countdown to this time.</span>
+        </div>
+        <input id="end" type="datetime-local" value="2026-10-31T23:30" style="width: 100%; box-sizing: border-box; min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px; color-scheme: dark">
+      </div>
+      <div style="padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #2E2638">
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+          <label for="topn" style="font-size: 16px; font-weight: 700">Finalists (top N)</label>
+          <span style="font-size: 13px; color: #B5ABC1">Masks that go to the live final.</span>
+        </div>
+        <input id="topn" type="number" inputmode="numeric" min="2" max="10" value="5" style="width: 84px; min-height: 50px; padding: 0 12px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px; font-family: 'JetBrains Mono', monospace; text-align: center">
+      </div>
+      <div style="padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid #2E2638">
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+          <label for="votes" style="font-size: 16px; font-weight: 700">Votes per guest</label>
+          <span style="font-size: 13px; color: #B5ABC1">One vote per mask.</span>
+        </div>
+        <input id="votes" type="number" inputmode="numeric" min="1" max="5" value="3" style="width: 84px; min-height: 50px; padding: 0 12px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px; font-family: 'JetBrains Mono', monospace; text-align: center">
+      </div>
+      <div style="padding: 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px">
+        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px">
+          <label for="counts" style="font-size: 16px; font-weight: 700">Show vote counts</label>
+          <span style="font-size: 13px; color: #B5ABC1">When on, guests see live counts from the start of voting.</span>
+        </div>
+        <input id="counts" type="checkbox" checked style="width: 26px; height: 26px; flex: none">
+      </div>
+    </form>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <button type="submit" style="width: 100%; min-height: 52px; border-radius: 14px; border: none; background: #FF7A1A; color: #1A0F05; font-size: 17px; font-weight: 700; cursor: pointer">Save settings</button>
+      <button type="button" style="width: 100%; min-height: 52px; border-radius: 14px; border: 1px solid #4A3F57; background: transparent; color: #F2EADF; font-size: 17px; font-weight: 600; cursor: pointer">End voting now</button>
+    </div>
+
+    <section aria-labelledby="reset-h" style="margin-top: 8px; padding: 16px; border-radius: 16px; border: 1px solid #6B2E36; background: #1E1418; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h2 id="reset-h" style="margin: 0; font-size: 18px; font-weight: 800; color: #FF8A8A">Reset tournament</h2>
+        <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #B5ABC1">Start fresh for a new party. Deletes every mask photo, all votes, finalists, winners and settings. This can't be undone.</p>
+      </div>
+      <button type="button" onClick="{{openReset}}" style="width: 100%; min-height: 50px; border-radius: 14px; border: 1px solid #FF8A8A; background: transparent; color: #FF8A8A; font-size: 16px; font-weight: 700; cursor: pointer">Reset tournament…</button>
+    </section>
+
+    <sc-if value="{{resetDone}}" hint-placeholder-val="{{false}}">
+      <p role="status" style="margin: 0; padding: 14px 16px; border-radius: 12px; background: #1E2A1E; border: 1px solid #3F6B3F; color: #CDEBC8; font-size: 15px">Tournament reset. Everything is cleared for the next party.</p>
+    </sc-if>
+  </main>
+
+  <nav aria-label="Admin" style="position: sticky; bottom: 0; z-index: 5; background: #1E1826; border-top: 1px solid #3A3046">
+    <div style="max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+      <a href="Admin-Entries.dc.html" style="min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #B5ABC1; font-size: 12px; font-weight: 600">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+        Check-in
+      </a>
+      <a href="Admin-Settings.dc.html" aria-current="page" style="min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #FF9A4D; font-size: 12px; font-weight: 700">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9A4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg>
+        Settings
+      </a>
+      <a href="Admin-Winners.dc.html" style="min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #B5ABC1; font-size: 12px; font-weight: 600">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"></path><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6"></path></svg>
+        Winners
+      </a>
+    </div>
+  </nav>
+
+  <sc-if value="{{confirmOpen}}" hint-placeholder-val="{{false}}">
+    <div style="position: fixed; inset: 0; z-index: 20; background: rgba(10, 7, 14, 0.8); display: flex; flex-direction: column; justify-content: flex-end">
+      <div role="alertdialog" aria-modal="true" aria-labelledby="dlg-h" aria-describedby="dlg-p" style="width: 100%; max-width: 480px; margin: 0 auto; padding: 12px 20px 24px; border-radius: 22px 22px 0 0; background: #1E1826; border: 1px solid #6B2E36; border-bottom: none; display: flex; flex-direction: column; gap: 16px; box-sizing: border-box">
+        <span style="align-self: center; width: 40px; height: 5px; border-radius: 999px; background: #4A3F57"></span>
+        <span style="width: 48px; height: 48px; border-radius: 999px; background: #3A1C22; display: flex; align-items: center; justify-content: center">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF8A8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18h.01"></path></svg>
+        </span>
+        <h2 id="dlg-h" style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.01em">Are you sure?</h2>
+        <div id="dlg-p" style="display: flex; flex-direction: column; gap: 8px; font-size: 15px; line-height: 1.5; color: #B5ABC1">
+          <span>This permanently deletes all {{maskCount}} mask photos, every vote, the finalists and winners, and all settings.</span>
+          <span>Guests will see an empty gallery until you check in new masks.</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 4px">
+          <button type="button" onClick="{{confirmReset}}" style="width: 100%; min-height: 52px; border-radius: 14px; border: none; background: #FF8A8A; color: #2A0A0E; font-size: 17px; font-weight: 700; cursor: pointer">Yes, reset everything</button>
+          <button type="button" onClick="{{closeReset}}" style="width: 100%; min-height: 52px; border-radius: 14px; border: 1px solid #4A3F57; background: transparent; color: #F2EADF; font-size: 17px; font-weight: 600; cursor: pointer">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":1500}}'>
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    this.state = { open: false, done: false };
+  }
+  renderVals() {
+    return {
+      maskCount: 12,
+      confirmOpen: this.state.open,
+      resetDone: this.state.done,
+      openReset: () => this.setState({ open: true, done: false }),
+      closeReset: () => this.setState({ open: false }),
+      confirmReset: () => this.setState({ open: false, done: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

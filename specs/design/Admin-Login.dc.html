@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin login</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14101A;color:#F2EADF;font-family:'Bricolage Grotesque',system-ui,sans-serif}
+a{color:#FF9A4D}a:hover{color:#FFB880}
+input{font-family:inherit}
+input:focus-visible,button:focus-visible{outline:3px solid #FF9A4D;outline-offset:2px}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #14101A; display: flex; flex-direction: column; justify-content: center; padding: 40px 20px; box-sizing: border-box">
+  <form style="width: 100%; max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px">
+    <div style="display: flex; flex-direction: column; gap: 12px">
+      <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FF7A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8c3-2 6-2 9 0 3-2 6-2 9 0 0 5-2 9-5 9-2 0-3-2-4-2s-2 2-4 2c-3 0-5-4-5-9z"></path><path d="M7.5 10.5h2M14.5 10.5h2"></path></svg>
+      <h1 style="margin: 0; font-size: 34px; font-weight: 800; letter-spacing: -0.02em">Host login</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #B5ABC1">Only the host signs in. Guests vote without an account.</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="email" style="font-size: 14px; font-weight: 600">Email</label>
+        <input id="email" type="email" inputmode="email" autocomplete="username" placeholder="host@example.com" style="min-height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #1E1826; color: #F2EADF; font-size: 17px">
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="pw" style="font-size: 14px; font-weight: 600">Password</label>
+        <input id="pw" type="password" autocomplete="current-password" style="min-height: 52px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #1E1826; color: #F2EADF; font-size: 17px">
+      </div>
+    </div>
+    <button type="submit" style="min-height: 54px; border: none; border-radius: 14px; background: #FF7A1A; color: #1A0F05; font-family: inherit; font-size: 17px; font-weight: 700; cursor: pointer">Sign in</button>
+  </form>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

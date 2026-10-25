@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14101A">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 24 24%27 fill=%27none%27 stroke=%27%23FF7A1A%27 stroke-width=%272%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27%3E%3Cpath d=%27M3 8c3-2 6-2 9 0 3-2 6-2 9 0 0 5-2 9-5 9-2 0-3-2-4-2s-2 2-4 2c-3 0-5-4-5-9z%27/%3E%3Cpath d=%27M7.5 10.5h2M14.5 10.5h2%27/%3E%3C/svg%3E">
+<title>Check-in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/css/style.css">
+<script type="module" src="/static/js/checkin.js"></script>
+</head>
+<body class="host" data-page="Check-in">
+<div class="app">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <span class="brand-name" data-party-name>Halovinovo</span>
+        <span class="host-tag">Host</span>
+      </div>
+      <button type="button" class="icon-btn" aria-label="Log out" data-logout>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+    <section aria-label="Status" class="tiles">
+      <div class="tile">
+        <span class="tile-label">Phase</span>
+        <span class="tile-value"><span class="dot" id="phase-dot"></span><span id="phase-text">—</span></span>
+      </div>
+      <div class="tile">
+        <span class="tile-label">Time left</span>
+        <span class="tile-value mono" id="time-left">—</span>
+      </div>
+      <div class="tile">
+        <span class="tile-label">Masks</span>
+        <span class="tile-value mono" id="mask-count">0</span>
+      </div>
+      <div class="tile">
+        <span class="tile-label">Guests voted</span>
+        <span class="tile-value mono" id="voter-count">0</span>
+      </div>
+    </section>
+
+    <form class="panel" id="checkin-form" aria-labelledby="checkin-h" novalidate>
+      <div class="panel-head">
+        <h2 id="checkin-h" class="section-title">Check in a mask</h2>
+        <span class="muted">Next: <span class="mono" id="next-number">#01</span></span>
+      </div>
+      <input type="file" id="photo-input" accept="image/*" capture="environment" class="sr-only" tabindex="-1" aria-hidden="true">
+      <button type="button" class="capture ph" id="capture-btn">
+        <span class="capture-icon">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+        </span>
+        <span class="capture-title">Take photo</span>
+        <span class="capture-hint">Opens your phone camera</span>
+        <img id="capture-preview" alt="" hidden>
+        <span class="capture-retake" id="capture-retake" hidden>Retake</span>
+      </button>
+      <div class="field">
+        <label for="label" class="field-label">Name or costume <span class="muted">(optional, hidden)</span></label>
+        <input id="label" class="input" type="text" maxlength="80" placeholder="e.g. Plague doctor">
+      </div>
+      <p id="checkin-status" class="status" hidden></p>
+      <button type="submit" class="btn btn-light" id="add-btn" disabled>Add to gallery</button>
+    </form>
+
+    <section aria-labelledby="gallery-h" class="field">
+      <div class="gallery-head">
+        <h2 id="gallery-h" class="section-title">Gallery</h2>
+        <span class="muted">Guests see counts only if "Show vote counts" is on</span>
+      </div>
+      <p id="gallery-status" class="status" hidden></p>
+      <p id="gallery-empty" class="empty" hidden>No masks yet. Take a photo above to add the first one.</p>
+      <div class="admin-grid" id="gallery"></div>
+    </section>
+  </main>
+
+  <nav aria-label="Host" class="tabbar">
+    <div class="tabbar-inner">
+      <a href="/admin" class="tab" aria-current="page">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+        Check-in
+      </a>
+      <a href="/admin/settings" class="tab">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg>
+        Settings
+      </a>
+      <a href="/admin/winners" class="tab">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"></path><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6"></path></svg>
+        Winners
+      </a>
+    </div>
+  </nav>
+</div>
+</body>
+</html>

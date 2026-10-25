@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Finalists</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14101A;color:#F2EADF;font-family:'Bricolage Grotesque',system-ui,sans-serif}
+a{color:#FF9A4D}a:hover{color:#FFB880}
+.ph{background:repeating-linear-gradient(135deg,#231C2C 0 10px,#1C1724 10px 20px)}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #14101A">
+  <header style="position: sticky; top: 0; z-index: 5; background: #14101A; border-bottom: 1px solid #2E2638">
+    <div style="max-width: 480px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 10px; min-width: 0">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF7A1A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M3 8c3-2 6-2 9 0 3-2 6-2 9 0 0 5-2 9-5 9-2 0-3-2-4-2s-2 2-4 2c-3 0-5-4-5-9z"></path><path d="M7.5 10.5h2M14.5 10.5h2"></path></svg>
+        <span style="font-weight: 800; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Halovinovo</span>
+      </div>
+      <span style="flex: none; font-size: 13px; font-weight: 600; padding: 7px 12px; border-radius: 999px; background: #2A2133; color: #B5ABC1">Voting closed</span>
+    </div>
+  </header>
+
+  <main style="max-width: 480px; margin: 0 auto; padding: 24px 16px 40px; display: flex; flex-direction: column; gap: 24px">
+    <section style="display: flex; flex-direction: column; gap: 10px">
+      <span style="font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #FF9A4D">Round 2 · Live final</span>
+      <h1 style="margin: 0; font-size: 34px; line-height: 1; font-weight: 800; letter-spacing: -0.03em">These {{count}} masks are going to the stage</h1>
+      <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #B5ABC1">Thanks for voting. Finalists, head to the stage — the winner is decided live.</p>
+    </section>
+
+    <ol aria-label="Finalists" style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px">
+      <sc-for list="{{finalists}}" as="f" hint-placeholder-count="5">
+        <li style="display: flex; align-items: center; gap: 14px; padding: 10px 14px 10px 10px; border-radius: 14px; background: #1E1826; border: 1px solid #3A3046">
+          <div class="ph" style="position: relative; width: 72px; height: 96px; flex: none; border-radius: 10px; display: flex; align-items: center; justify-content: center">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5E5269" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+          </div>
+          <div style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px">
+            <span style="font-size: 13px; font-weight: 600; color: #FF9A4D">Finalist {{f.rank}}</span>
+            <span style="font-family: 'JetBrains Mono', monospace; font-size: 24px; font-weight: 700">#{{f.num}}</span>
+          </div>
+          <sc-if value="{{showCounts}}" hint-placeholder-val="{{true}}">
+            <span style="flex: none; display: flex; flex-direction: column; align-items: flex-end">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 20px; font-weight: 700">{{f.votes}}</span>
+              <span style="font-size: 12px; color: #B5ABC1">votes</span>
+            </span>
+          </sc-if>
+        </li>
+      </sc-for>
+    </ol>
+
+    <section style="display: flex; align-items: center; gap: 12px; padding: 16px; border-radius: 14px; border: 1px dashed #4A3F57">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9A4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M3 10v4h4l5 4V6L7 10z"></path><path d="M16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"></path></svg>
+      <p style="margin: 0; font-size: 15px">Winners appear here once the host announces them.</p>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"count":{"editor":"int","default":5,"min":2,"max":10},"showCounts":{"editor":"boolean","default":true},"$preview":{"width":390,"height":1100}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const n = this.props.count ?? 5;
+    const nums = [7, 2, 11, 4, 9, 1, 12, 5, 3, 8];
+    const votes = [24, 21, 19, 16, 14, 12, 11, 9, 8, 6];
+    const finalists = [];
+    for (let i = 0; i < n; i++) finalists.push({ rank: i + 1, num: String(nums[i]).padStart(2, '0'), votes: votes[i] });
+    return { count: n, finalists, showCounts: this.props.showCounts ?? true };
+  }
+}
+</script>
+</body>
+</html>

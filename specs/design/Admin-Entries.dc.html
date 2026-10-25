@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin · Check-in and entries</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=JetBrains+Mono:wght@500;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#14101A;color:#F2EADF;font-family:'Bricolage Grotesque',system-ui,sans-serif}
+a{color:#FF9A4D}a:hover{color:#FFB880}
+input,button{font-family:inherit}
+input:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #FF9A4D;outline-offset:2px}
+.ph{background:repeating-linear-gradient(135deg,#231C2C 0 10px,#1C1724 10px 20px)}
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #14101A; display: flex; flex-direction: column">
+  <header style="position: sticky; top: 0; z-index: 5; background: #14101A; border-bottom: 1px solid #2E2638">
+    <div style="max-width: 480px; margin: 0 auto; padding: 8px 8px 8px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px">
+      <div style="display: flex; align-items: center; gap: 10px; min-width: 0">
+        <span style="font-weight: 800; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Halovinovo</span>
+        <span style="flex: none; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 7px; border-radius: 6px; background: #2A2133; color: #FF9A4D">Host</span>
+      </div>
+      <a href="Admin-Login.dc.html" aria-label="Log out" style="flex: none; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 10px">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 4H5v16h5M15 8l4 4-4 4M19 12H9"></path></svg>
+      </a>
+    </div>
+  </header>
+
+  <main style="flex: 1; width: 100%; max-width: 480px; margin: 0 auto; padding: 20px 16px 28px; box-sizing: border-box; display: flex; flex-direction: column; gap: 24px">
+    <section aria-label="Status" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <div style="padding: 14px; border-radius: 12px; background: #1E1826; border: 1px solid #2E2638; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 13px; color: #B5ABC1">Phase</span>
+        <span style="display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 800"><span style="width: 8px; height: 8px; border-radius: 999px; background: #FF7A1A"></span>Voting open</span>
+      </div>
+      <div style="padding: 14px; border-radius: 12px; background: #1E1826; border: 1px solid #2E2638; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 13px; color: #B5ABC1">Time left</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700">00:42:17</span>
+      </div>
+      <div style="padding: 14px; border-radius: 12px; background: #1E1826; border: 1px solid #2E2638; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 13px; color: #B5ABC1">Masks</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700">{{count}}</span>
+      </div>
+      <div style="padding: 14px; border-radius: 12px; background: #1E1826; border: 1px solid #2E2638; display: flex; flex-direction: column; gap: 4px">
+        <span style="font-size: 13px; color: #B5ABC1">Guests voted</span>
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 18px; font-weight: 700">[N]</span>
+      </div>
+    </section>
+
+    <section aria-labelledby="checkin" style="display: flex; flex-direction: column; gap: 14px; padding: 16px; border-radius: 16px; background: #1E1826; border: 1px solid #3A3046">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 8px">
+        <h2 id="checkin" style="margin: 0; font-size: 20px; font-weight: 800">Check in a mask</h2>
+        <span style="font-size: 13px; color: #B5ABC1">Next: <span style="font-family: 'JetBrains Mono', monospace; color: #F2EADF; font-weight: 700">#{{next}}</span></span>
+      </div>
+      <button type="button" class="ph" style="width: 100%; aspect-ratio: 4 / 3; border-radius: 14px; border: 2px dashed #6E6279; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #F2EADF; cursor: pointer">
+        <span style="width: 64px; height: 64px; border-radius: 999px; background: #FF7A1A; display: flex; align-items: center; justify-content: center">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#1A0F05" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+        </span>
+        <span style="font-size: 17px; font-weight: 700">Take photo</span>
+        <span style="font-size: 13px; color: #B5ABC1">Opens your phone camera</span>
+      </button>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <label for="label" style="font-size: 14px; font-weight: 600">Name or costume <span style="font-weight: 400; color: #B5ABC1">(optional, hidden)</span></label>
+        <input id="label" type="text" placeholder="e.g. Plague doctor" style="min-height: 50px; padding: 0 14px; border-radius: 12px; border: 1px solid #4A3F57; background: #14101A; color: #F2EADF; font-size: 17px">
+      </div>
+      <button type="button" style="width: 100%; min-height: 52px; border: none; border-radius: 14px; background: #F2EADF; color: #14101A; font-size: 17px; font-weight: 700; cursor: pointer">Add to gallery</button>
+    </section>
+
+    <section aria-labelledby="entries" style="display: flex; flex-direction: column; gap: 12px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h2 id="entries" style="margin: 0; font-size: 20px; font-weight: 800">Gallery</h2>
+        <span style="font-size: 13px; color: #B5ABC1">Guests see counts only if "Show vote counts" is on</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{entries}}" as="e" hint-placeholder-count="12">
+          <article style="border-radius: 12px; overflow: hidden; background: #1E1826; border: 1px solid #2E2638; display: flex; flex-direction: column">
+            <div class="ph" style="position: relative; aspect-ratio: 1 / 1; display: flex; align-items: center; justify-content: center">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5E5269" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+              <span style="position: absolute; top: 6px; left: 6px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 5px; background: #14101A; color: #F2EADF">#{{e.num}}</span>
+            </div>
+            <div style="padding: 0 0 0 8px; display: flex; align-items: center; justify-content: space-between">
+              <span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #B5ABC1">{{e.votes}}</span>
+              <button type="button" aria-label="Remove mask {{e.num}}" style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border: none; background: transparent; cursor: pointer">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path></svg>
+              </button>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+
+  <nav aria-label="Admin" style="position: sticky; bottom: 0; z-index: 5; background: #1E1826; border-top: 1px solid #3A3046">
+    <div style="max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+      <a href="Admin-Entries.dc.html" aria-current="page" style="min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #FF9A4D; font-size: 12px; font-weight: 700">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF9A4D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"></path><circle cx="12" cy="13" r="3.5"></circle></svg>
+        Check-in
+      </a>
+      <a href="Admin-Settings.dc.html" style="min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #B5ABC1; font-size: 12px; font-weight: 600">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"></path><circle cx="16" cy="6" r="2"></circle><circle cx="10" cy="12" r="2"></circle><circle cx="18" cy="18" r="2"></circle></svg>
+        Settings
+      </a>
+      <a href="Admin-Winners.dc.html" style="min-height: 60px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-decoration: none; color: #B5ABC1; font-size: 12px; font-weight: 600">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#B5ABC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4h8v5a4 4 0 0 1-8 0z"></path><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6"></path></svg>
+        Winners
+      </a>
+    </div>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"count":{"editor":"int","default":12,"min":1,"max":40},"$preview":{"width":390,"height":1700}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const n = this.props.count ?? 12;
+    const v = [12, 21, 8, 16, 6, 3, 24, 5, 14, 9, 19, 11];
+    const pad = (x) => String(x).padStart(2, '0');
+    const entries = [];
+    for (let i = 1; i <= n; i++) entries.push({ num: pad(i), votes: v[(i - 1) % v.length] });
+    return { count: n, next: pad(n + 1), entries };
+  }
+}
+</script>
+</body>
+</html>
