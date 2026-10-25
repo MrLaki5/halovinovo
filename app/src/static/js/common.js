@@ -7,6 +7,7 @@ export const icons = {
   trophy: (size = 20) => svg(size, '<path d="M8 4h8v5a4 4 0 0 1-8 0z"></path><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M9 20h6"></path>'),
   trash: (size = 17) => svg(size, '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"></path>'),
   warning: (size = 24) => svg(size, '<path d="M12 3l10 18H2z"></path><path d="M12 10v5M12 18h.01"></path>'),
+  qr: (size = 16) => svg(size, '<rect x="4" y="4" width="6" height="6" rx="1"></rect><rect x="14" y="4" width="6" height="6" rx="1"></rect><rect x="4" y="14" width="6" height="6" rx="1"></rect><path d="M14 14h2v2M20 14v.01M14 20h2M18 18h2v2"></path>'),
 };
 
 export const pad2 = (n) => String(n).padStart(2, '0');
@@ -149,9 +150,10 @@ export function syncList(container, items, key, create, update) {
   }
 }
 
-export function photoHTML(mask, { iconSize = 36, badge = true } = {}) {
+// tag "span" for use inside a <button>, which may only hold phrasing content
+export function photoHTML(mask, { iconSize = 36, badge = true, tag = 'div' } = {}) {
   const num = maskNum(mask.number);
-  return `<div class="photo ph">${icons.camera(iconSize)}<img src="${esc(mask.photo_url)}" alt="Mask ${num}" loading="lazy" decoding="async">${badge ? `<span class="num-badge">${num}</span>` : ''}</div>`;
+  return `<${tag} class="photo ph">${icons.camera(iconSize)}<img src="${esc(mask.photo_url)}" alt="Mask ${num}" loading="lazy" decoding="async">${badge ? `<span class="num-badge">${num}</span>` : ''}</${tag}>`;
 }
 
 export function podiumHTML(winners) {

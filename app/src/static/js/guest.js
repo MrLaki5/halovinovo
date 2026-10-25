@@ -10,8 +10,9 @@ const PHASE_PILL = { checkin: 'Opens soon', final: 'Voting closed', winners: 'Wi
 const latest = latestOnly();
 let state = null;
 let busy = false;
-let errorTimer = null;
+let statusTimer = null;
 let podiumShown = null;
+let refresh = () => {};
 
 async function load(request) {
   const next = await latest(request);
@@ -19,15 +20,32 @@ async function load(request) {
     state = next;
     render();
   }
+  return next;
 }
 
-const refresh = poll(() => load(api('GET', '/api/state')));
-
-function showError(message) {
-  showStatus($('vote-error'), message, true);
-  clearTimeout(errorTimer);
-  errorTimer = setTimeout(() => showStatus($('vote-error'), ''), 4000);
+function notify(message, { isError = false, sticky = false } = {}) {
+  showStatus($('vote-status'), message, isError);
+  clearTimeout(statusTimer);
+  if (!sticky) statusTimer = setTimeout(() => showStatus($('vote-status'), ''), 4000);
 }
+const showError = (message) => notify(message, { isError: true });
+
+// Arriving from a check-in QR: claim the ticket, then drop it from the address bar
+async function start() {
+  const ticket = new URLSearchParams(location.search).get('ticket');
+  if (ticket) {
+    history.replaceState(null, '', location.pathname);
+    try {
+      const claimed = await load(api('POST', '/api/claim', { ticket }));
+      const me = claimed?.masks.find((m) => m.id === claimed.my_mask_id);
+      notify(`You're in${me ? ` as ${maskNum(me.number)}` : ''}. Pick your favourite costumes below.`);
+    } catch (e) {
+      notify(e.message, { isError: true, sticky: true });
+    }
+  }
+  refresh = poll(() => load(api('GET', '/api/state')));
+}
+start();
 
 async function act(method, path) {
   if (busy) return;
@@ -84,12 +102,14 @@ function renderVote() {
   $('vote-title').textContent = max === 1 ? 'Pick your best costume' : `Pick your ${word} best costumes`;
   $('vote-lead').textContent = `${max === 1 ? 'Tap one mask' : `Tap up to ${word} masks`}. When the timer runs out, the top ${state.finalist_count} go to the live final on stage.`;
   $('vote-empty').hidden = state.masks.length > 0;
+  $('ticket-notice').hidden = hasTicket();
   syncList($('mask-grid'), state.masks, (m) => m.id, createCard, updateCard);
 
   const picked = mine.map((id) => state.masks.find((m) => m.id === id)).filter(Boolean);
   let summary = `${mine.length} of ${max} picked`;
   if (picked.length) summary += ' · ' + picked.map((m) => maskNum(m.number)).join(', ');
   if (state.phase === 'checkin') summary = 'Voting opens soon';
+  if (!hasTicket()) summary = 'Scan your check-in QR to vote';
   if (state.locked) summary = 'Votes locked in. Watch for the finalists.';
   $('vote-summary').textContent = summary;
 
@@ -100,6 +120,8 @@ function renderVote() {
   lock.textContent = state.locked ? 'Votes locked' : 'Lock in my votes';
   lock.disabled = state.phase !== 'voting' || state.locked || mine.length === 0;
 }
+
+const hasTicket = () => state.my_mask_id !== null;
 
 function createCard(mask) {
   const el = h(`
@@ -120,13 +142,15 @@ function createCard(mask) {
 
 function updateCard(el, mask) {
   const voted = state.my_votes.includes(mask.id);
-  const open = state.phase === 'voting' && !state.locked;
+  const mine = mask.id === state.my_mask_id;
+  const open = state.phase === 'voting' && hasTicket() && !state.locked;
   const outOfVotes = state.my_votes.length >= state.votes_per_guest;
-  const disabled = !open || (outOfVotes && !voted);
+  const disabled = !open || mine || (outOfVotes && !voted);
   const num = maskNum(mask.number);
 
   el.classList.toggle('is-voted', voted);
-  el.classList.toggle('is-dim', state.phase === 'voting' && disabled && !voted);
+  el.classList.toggle('is-mine', mine);
+  el.classList.toggle('is-dim', open && disabled && !voted && !mine);
   el.querySelector('.check-badge').hidden = !voted;
 
   const count = el.querySelector('.count-row');
@@ -136,7 +160,10 @@ function updateCard(el, mask) {
   const btn = el.querySelector('.btn-vote');
   btn.disabled = disabled;
   btn.setAttribute('aria-pressed', String(voted));
-  if (voted) {
+  if (mine) {
+    btn.textContent = 'Your mask';
+    btn.setAttribute('aria-label', `Mask ${num} is yours`);
+  } else if (voted) {
     btn.textContent = 'Voted';
     btn.setAttribute('aria-label', open ? `Remove vote for mask ${num}` : `Voted for mask ${num}`);
   } else {

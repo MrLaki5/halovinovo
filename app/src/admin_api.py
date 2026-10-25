@@ -4,11 +4,14 @@ import secrets
 from datetime import datetime, timezone
 from typing import Optional
 
+import qrcode
+import qrcode.image.svg
 from config import settings
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Request, Response, UploadFile
 from loguru import logger
 from orm import crud
 from orm.database import get_db
+from orm.models import Mask
 from photos import delete_photos, detect_extension, save_photo
 from schema import AdminState, LoginRequest, SettingsUpdate, WinnersUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -86,6 +89,33 @@ async def remove_mask(mask_id: int, db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Mask not found")
     await db.commit()
     delete_photos([mask.photo])
+    return await build_admin_state(db)
+
+
+async def find_mask(db: AsyncSession, mask_id: int) -> Mask:
+    mask = await db.get(Mask, mask_id, populate_existing=True)
+    if mask is None:
+        raise HTTPException(status_code=404, detail="Mask not found")
+    return mask
+
+
+@router.get("/masks/{mask_id}/qr.svg")
+async def ticket_qr(mask_id: int, request: Request, db: AsyncSession = Depends(get_db)):
+    """The guest's ticket as a QR code, pointing at whatever address the host is using."""
+    mask = await find_mask(db, mask_id)
+    scheme = request.headers.get("x-forwarded-proto", request.url.scheme)
+    url = f"{scheme}://{request.headers['host']}/?ticket={mask.ticket}"
+    svg = qrcode.make(url, image_factory=qrcode.image.svg.SvgPathImage, border=0).to_string()
+    return Response(svg, media_type="image/svg+xml", headers={"Cache-Control": "no-store"})
+
+
+@router.post("/masks/{mask_id}/ticket", response_model=AdminState)
+async def reissue_ticket(mask_id: int, db: AsyncSession = Depends(get_db)):
+    """Replace a guest's ticket. The phone holding the old one stops voting; votes stay."""
+    mask = await find_mask(db, mask_id)
+    mask.ticket = crud.new_ticket()
+    mask.session = None
+    await db.commit()
     return await build_admin_state(db)
 
 

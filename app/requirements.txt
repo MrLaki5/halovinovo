@@ -5,6 +5,7 @@ pydantic==2.13.4
 pydantic-settings==2.10.1
 python-multipart==0.0.20
 loguru==0.7.3
+qrcode==8.0
 sqlalchemy[asyncio]==2.0.43
 asyncpg==0.30.0
 alembic==1.14.1

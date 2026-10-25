@@ -25,6 +25,8 @@ Data lives in `./db_persist_data` (Postgres) and `./uploads` (mask photos).
 ## Running the party
 
 1. **Check-in** — on the Check-in tab, take a photo of each mask and tap *Add to gallery*.
+   The guest's voting QR opens right away; they scan it with their phone camera. Tap any
+   photo in the gallery to show its QR again later.
 2. **Voting** — on Settings, set *Voting closes at* and save. A future close time opens voting.
 3. **Final** — voting closes by itself at that time, or tap *End voting now*. Guests see the finalists.
 4. **Winners** — after the live final, fill in the Winners tab and *Publish winners*.
@@ -37,5 +39,10 @@ Data lives in `./db_persist_data` (Postgres) and `./uploads` (mask photos).
 - **Unlocked votes count.** *Lock in my votes* only stops a guest changing them.
 - **Reopening voting:** saving a future close time during the final phase reopens voting.
 - **Podium:** 1st place is required; 2nd and 3rd are optional. Winners can be re-published to fix a typo.
-- **Guest identity** is an anonymous cookie. A guest who clears cookies can vote again; no party-code gate is implemented.
+- **One ticket per guest:** every checked-in mask gets a single-use QR ticket. Only the phone
+  that claims it can vote, so incognito windows or a second browser can't vote again.
+- **Lost phone or cleared browser:** open the guest's QR from the gallery and tap *Issue new
+  code*. The old phone stops voting, and the guest's votes and lock carry over to the new one.
+- **No self-votes:** a guest can't vote for their own mask.
+- **Deleting a mask** also deletes the votes that guest cast.
 - **Live updates** use polling every 3 s.

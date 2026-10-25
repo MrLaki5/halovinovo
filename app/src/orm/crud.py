@@ -3,7 +3,7 @@
 Nothing here commits: the caller owns the transaction.
 """
 
-import uuid
+import secrets
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Sequence, Tuple
 
@@ -11,7 +11,7 @@ from sqlalchemy import delete, distinct, func, insert, select, update
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .models import ContestSettings, Mask, Vote, Voter, Winner
+from .models import ContestSettings, Mask, Vote, Winner
 
 # ---- contest settings -------------------------------------------------------
 
@@ -57,7 +57,7 @@ async def create_mask(db: AsyncSession, *, photo: str, label: Optional[str]) -> 
         .values(next_mask_number=ContestSettings.next_mask_number + 1)
         .returning(ContestSettings.next_mask_number - 1)
     )
-    mask = Mask(number=res.scalar_one(), photo=photo, label=label)
+    mask = Mask(number=res.scalar_one(), photo=photo, label=label, ticket=new_ticket())
     db.add(mask)
     await db.flush()
     return mask
@@ -72,6 +72,33 @@ async def delete_mask(db: AsyncSession, mask_id: int) -> Optional[Mask]:
     return mask
 
 
+# ---- tickets ----------------------------------------------------------------
+
+
+def new_ticket() -> str:
+    return secrets.token_urlsafe(16)
+
+
+async def _find_mask(db: AsyncSession, condition, lock: bool) -> Optional[Mask]:
+    q = select(Mask).where(condition)
+    if lock:
+        # NO KEY UPDATE, so votes for this mask (FK checks) aren't blocked by the lock
+        q = q.with_for_update(key_share=True)
+    res = await db.execute(q.execution_options(populate_existing=True))
+    return res.scalar_one_or_none()
+
+
+async def get_mask_by_ticket(db: AsyncSession, ticket: str, *, lock: bool = False) -> Optional[Mask]:
+    return await _find_mask(db, Mask.ticket == ticket, lock)
+
+
+async def get_mask_by_session(
+    db: AsyncSession, session: str, *, lock: bool = False
+) -> Optional[Mask]:
+    """The guest a phone votes as. Locking it serializes that guest's requests."""
+    return await _find_mask(db, Mask.session == session, lock)
+
+
 # ---- votes ------------------------------------------------------------------
 
 
@@ -82,42 +109,30 @@ async def vote_counts(db: AsyncSession) -> Dict[int, int]:
 
 async def count_voters(db: AsyncSession) -> int:
     """Guests with at least one vote."""
-    res = await db.execute(select(func.count(distinct(Vote.voter_id))))
+    res = await db.execute(select(func.count(distinct(Vote.voter_mask_id))))
     return res.scalar_one()
 
 
-async def lock_voter(db: AsyncSession, voter_id: uuid.UUID) -> Voter:
-    """Get or create a voter row, locked for update so one guest's requests serialize."""
-    await db.execute(pg_insert(Voter).values(id=voter_id).on_conflict_do_nothing())
+async def voter_mask_ids(db: AsyncSession, voter_mask_id: int) -> List[int]:
+    """The masks a guest picked, in the order they picked them."""
     res = await db.execute(
-        select(Voter)
-        .where(Voter.id == voter_id)
-        .with_for_update()
-        .execution_options(populate_existing=True)
-    )
-    return res.scalar_one()
-
-
-async def get_voter(db: AsyncSession, voter_id: uuid.UUID) -> Optional[Voter]:
-    return await db.get(Voter, voter_id, populate_existing=True)
-
-
-async def voter_mask_ids(db: AsyncSession, voter_id: uuid.UUID) -> List[int]:
-    """The masks a voter picked, in the order they picked them."""
-    res = await db.execute(
-        select(Vote.mask_id).where(Vote.voter_id == voter_id).order_by(Vote.id)
+        select(Vote.mask_id).where(Vote.voter_mask_id == voter_mask_id).order_by(Vote.id)
     )
     return list(res.scalars().all())
 
 
-async def add_vote(db: AsyncSession, *, voter_id: uuid.UUID, mask_id: int) -> None:
+async def add_vote(db: AsyncSession, *, voter_mask_id: int, mask_id: int) -> None:
     await db.execute(
-        pg_insert(Vote).values(voter_id=voter_id, mask_id=mask_id).on_conflict_do_nothing()
+        pg_insert(Vote)
+        .values(voter_mask_id=voter_mask_id, mask_id=mask_id)
+        .on_conflict_do_nothing()
     )
 
 
-async def remove_vote(db: AsyncSession, *, voter_id: uuid.UUID, mask_id: int) -> None:
-    await db.execute(delete(Vote).where(Vote.voter_id == voter_id, Vote.mask_id == mask_id))
+async def remove_vote(db: AsyncSession, *, voter_mask_id: int, mask_id: int) -> None:
+    await db.execute(
+        delete(Vote).where(Vote.voter_mask_id == voter_mask_id, Vote.mask_id == mask_id)
+    )
 
 
 def pick_finalists(masks: Sequence[Mask], counts: Dict[int, int], n: int) -> List[Mask]:
@@ -156,9 +171,8 @@ async def reset_contest(db: AsyncSession) -> List[str]:
     res = await db.execute(select(Mask.photo))
     photos = list(res.scalars().all())
 
-    # Winners and votes cascade from masks and voters
+    # Winners, votes and guest sessions all go with the masks
     await db.execute(delete(Mask))
-    await db.execute(delete(Voter))
     await db.execute(delete(ContestSettings))
     await db.execute(insert(ContestSettings).values(id=1))
     return photos

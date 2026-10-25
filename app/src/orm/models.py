@@ -1,10 +1,10 @@
 """Contest tables.
 
-`contest_settings` holds exactly one row: the party's config and its phase. Masks are
-the checked-in costumes, votes link anonymous voters to masks, winners hold the podium.
+`contest_settings` holds exactly one row: the party's config and its phase. A mask is a
+checked-in guest: their costume photo plus the single-use ticket their phone votes with.
+Votes link the voting guest's mask to the mask they picked, winners hold the podium.
 """
 
-import uuid
 from datetime import datetime
 
 from sqlalchemy import (
@@ -16,7 +16,6 @@ from sqlalchemy import (
     Integer,
     String,
     UniqueConstraint,
-    Uuid,
     func,
     true,
 )
@@ -63,15 +62,11 @@ class Mask(Base):
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
-
-class Voter(Base):
-    __tablename__ = "voters"
-
-    id: Mapped[uuid.UUID] = mapped_column(Uuid, primary_key=True)
+    # Code in the guest's check-in QR. Reissuing replaces it and drops the session.
+    ticket: Mapped[str] = mapped_column(String(43), nullable=False, unique=True)
+    # Cookie secret of the phone that claimed the ticket; null until claimed
+    session: Mapped[str | None] = mapped_column(String(64), unique=True)
     locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), nullable=False, server_default=func.now()
-    )
 
 
 class Vote(Base):
@@ -81,14 +76,17 @@ class Vote(Base):
     mask_id: Mapped[int] = mapped_column(
         ForeignKey("masks.id", ondelete="CASCADE"), nullable=False
     )
-    voter_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey("voters.id", ondelete="CASCADE"), nullable=False, index=True
+    # The guest who voted, identified by their own mask
+    voter_mask_id: Mapped[int] = mapped_column(
+        ForeignKey("masks.id", ondelete="CASCADE"), nullable=False, index=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
     )
 
-    __table_args__ = (UniqueConstraint("mask_id", "voter_id", name="uq_votes_mask_voter"),)
+    __table_args__ = (
+        UniqueConstraint("mask_id", "voter_mask_id", name="uq_votes_mask_voter"),
+    )
 
 
 class Winner(Base):

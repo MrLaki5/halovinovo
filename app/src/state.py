@@ -1,6 +1,5 @@
 """Snapshots of the contest as guests and the host see them."""
 
-import uuid
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -35,7 +34,7 @@ async def build_winners(db: AsyncSession) -> list[WinnerOut]:
     ]
 
 
-async def build_guest_state(db: AsyncSession, voter_id: Optional[uuid.UUID]) -> GuestState:
+async def build_guest_state(db: AsyncSession, session: Optional[str]) -> GuestState:
     contest = await crud.get_contest(db)
     masks = await crud.list_masks(db)
     counts = await crud.vote_counts(db)
@@ -49,7 +48,7 @@ async def build_guest_state(db: AsyncSession, voter_id: Optional[uuid.UUID]) -> 
             votes=counts.get(mask.id, 0) if show_counts else None,
         )
 
-    voter = await crud.get_voter(db, voter_id) if voter_id else None
+    me = await crud.get_mask_by_session(db, session) if session else None
     finalists = (
         crud.pick_finalists(masks, counts, contest.finalist_count)
         if contest.phase in ("final", "winners")
@@ -61,8 +60,9 @@ async def build_guest_state(db: AsyncSession, voter_id: Optional[uuid.UUID]) -> 
         masks=[out(m) for m in masks],
         finalists=[out(m) for m in finalists],
         winners=await build_winners(db) if contest.phase == "winners" else [],
-        my_votes=await crud.voter_mask_ids(db, voter_id) if voter else [],
-        locked=bool(voter and voter.locked_at),
+        my_mask_id=me.id if me else None,
+        my_votes=await crud.voter_mask_ids(db, me.id) if me else [],
+        locked=bool(me and me.locked_at),
     )
 
 
@@ -78,6 +78,8 @@ async def build_admin_state(db: AsyncSession) -> AdminState:
             photo_url=photo_url(mask.photo),
             label=mask.label,
             votes=counts.get(mask.id, 0),
+            ticket=mask.ticket,
+            ticket_claimed=mask.session is not None,
         )
 
     finalists = (

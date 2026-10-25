@@ -11,6 +11,10 @@ class LoginRequest(BaseModel):
     password: str
 
 
+class ClaimRequest(BaseModel):
+    ticket: str = Field(min_length=1, max_length=64)
+
+
 class MaskOut(BaseModel):
     """A mask as guests see it: no label, and votes only when counts are shown."""
 
@@ -23,6 +27,8 @@ class MaskOut(BaseModel):
 class AdminMaskOut(MaskOut):
     label: Optional[str] = None
     votes: int
+    ticket: str
+    ticket_claimed: bool
 
 
 class WinnerOut(BaseModel):
@@ -46,6 +52,8 @@ class GuestState(ContestOut):
     masks: List[MaskOut]
     finalists: List[MaskOut]
     winners: List[WinnerOut]
+    # The guest's own mask, or None while this phone has no ticket
+    my_mask_id: Optional[int] = None
     my_votes: List[int]
     locked: bool
 
