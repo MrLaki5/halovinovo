@@ -1,4 +1,4 @@
-# Halovinovo — Halloween costume vote
+# Halovinovo: Halloween costume vote
 
 Mobile web app for one party: the host photographs each mask on arrival, guests vote from
 their phones (no login), the top N go to a live final, and the host publishes the podium.
@@ -6,6 +6,22 @@ Behaviour spec and designs are in [specs/](specs/).
 
 Stack: FastAPI + Postgres + nginx (TLS, serves photos) via Docker Compose. Frontend is plain
 HTML/CSS/JS in [app/src/static/](app/src/static/).
+
+## Screenshots
+
+Guest screens, which switch by themselves as the party moves on:
+
+| Vote | Finalists | Winners |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/guest-vote.jpg" width="240" alt="Guest vote screen with a countdown, mask cards and vote buttons"> | <img src="docs/screenshots/guest-finalists.jpg" width="240" alt="Finalists list ranked by votes"> | <img src="docs/screenshots/guest-winners.jpg" width="240" alt="Winners podium with the 1st place card"> |
+
+Host screens:
+
+| Check-in gallery | Guest ticket QR | Settings | Announce winners |
+|:---:|:---:|:---:|:---:|
+| <img src="docs/screenshots/host-checkin.jpg" width="180" alt="Host gallery with vote counts and scanned-ticket badges"> | <img src="docs/screenshots/host-ticket-qr.jpg" width="180" alt="Voting ticket QR for a checked-in guest"> | <img src="docs/screenshots/host-settings.jpg" width="180" alt="Contest settings with the phase stepper"> | <img src="docs/screenshots/host-winners.jpg" width="180" alt="Form for picking 1st, 2nd and 3rd place"> |
+
+The costume photos are drawn sample images, not real guests.
 
 ## Run
 
@@ -24,12 +40,12 @@ Data lives in `./db_persist_data` (Postgres) and `./uploads` (mask photos).
 
 ## Running the party
 
-1. **Check-in** — on the Check-in tab, take a photo of each mask and tap *Add to gallery*.
+1. **Check-in:** on the Check-in tab, take a photo of each mask and tap *Add to gallery*.
    The guest's voting QR opens right away; they scan it with their phone camera. Tap any
    photo in the gallery to show its QR again later.
-2. **Voting** — on Settings, set *Voting closes at* and save. A future close time opens voting.
-3. **Final** — voting closes by itself at that time, or tap *End voting now*. Guests see the finalists.
-4. **Winners** — after the live final, fill in the Winners tab and *Publish winners*.
+2. **Voting:** on Settings, set *Voting closes at* and save. A future close time opens voting.
+3. **Final:** voting closes by itself at that time, or tap *End voting now*. Guests see the finalists.
+4. **Winners:** after the live final, fill in the Winners tab and *Publish winners*.
 5. **Reset tournament** (Settings) wipes everything for the next party.
 
 ## Rule decisions
