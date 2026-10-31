@@ -3,6 +3,7 @@ from pathlib import Path
 
 import admin_api
 import guest_api
+import photos
 from config import settings
 from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, RedirectResponse
@@ -12,6 +13,16 @@ from orm.database import dispose_engine, run_migrations
 from starlette.middleware.sessions import SessionMiddleware
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+
+
+class ImmutableFiles(StaticFiles):
+    """Mask photos are written under random names, so they never change."""
+
+    async def get_response(self, path, scope):
+        response = await super().get_response(path, scope)
+        if response.status_code == 200:
+            response.headers["Cache-Control"] = "public, max-age=2592000, immutable"
+        return response
 
 
 @asynccontextmanager
@@ -41,6 +52,7 @@ app.include_router(guest_api.router)
 app.include_router(admin_api.auth_router)
 app.include_router(admin_api.router)
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount(photos.URL_PREFIX.rstrip("/"), ImmutableFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 
 def page(name: str) -> FileResponse:

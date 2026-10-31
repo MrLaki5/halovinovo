@@ -1,6 +1,4 @@
 .env
 db_persist_data/
 uploads/
-certificates/
-webroot/
 __pycache__/

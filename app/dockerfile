@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY src/ src/
 
-# Mask photos; mounted from the host and shared with nginx in compose.yml
+# Mask photos; mounted from the host in compose.yml
 RUN mkdir -p /app/uploads
 
 # Set working directory to src for imports to work

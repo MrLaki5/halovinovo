@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     SESSION_SECRET_KEY: str
     SESSION_TTL_HOURS: int = 48
 
-    # Shared with nginx, which serves it at /uploads/
+    # Served at /uploads/, see main.py
     UPLOAD_DIR: str = "/app/uploads"
     MAX_UPLOAD_BYTES: int = 10 * 1024 * 1024
 
