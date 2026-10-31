@@ -25,6 +25,15 @@ class ImmutableFiles(StaticFiles):
         return response
 
 
+class RevalidatedFiles(StaticFiles):
+    """JS and CSS change on deploy, so browsers and Cloudflare must check for a new copy."""
+
+    async def get_response(self, path, scope):
+        response = await super().get_response(path, scope)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
 @asynccontextmanager
 async def lifespan(_app):
     # Startup
@@ -51,7 +60,7 @@ app.add_middleware(
 app.include_router(guest_api.router)
 app.include_router(admin_api.auth_router)
 app.include_router(admin_api.router)
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/static", RevalidatedFiles(directory=STATIC_DIR), name="static")
 app.mount(photos.URL_PREFIX.rstrip("/"), ImmutableFiles(directory=settings.UPLOAD_DIR), name="uploads")
 
 
