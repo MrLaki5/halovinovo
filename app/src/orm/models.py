@@ -2,6 +2,7 @@
 
 `contest_settings` holds exactly one row: the party's config and its phase. A mask is a
 checked-in guest: their costume photo plus the single-use ticket their phone votes with.
+A guest without a costume has no photo or number, only a name in `label`, and can't be voted for.
 Votes link the voting guest's mask to the mask they picked, winners hold the podium.
 """
 
@@ -53,10 +54,11 @@ class Mask(Base):
     __tablename__ = "masks"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    number: Mapped[int] = mapped_column(Integer, nullable=False, unique=True)
+    # Both null for a name-only voter
+    number: Mapped[int | None] = mapped_column(Integer, unique=True)
     # File name under UPLOAD_DIR
-    photo: Mapped[str] = mapped_column(String(64), nullable=False)
-    # Host-only, never sent to guests
+    photo: Mapped[str | None] = mapped_column(String(64))
+    # Host-only, never sent to guests. A name-only voter's name.
     label: Mapped[str | None] = mapped_column(String(80))
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, server_default=func.now()
@@ -67,6 +69,13 @@ class Mask(Base):
     # Cookie secret of the phone that claimed the ticket; null until claimed
     session: Mapped[str | None] = mapped_column(String(64), unique=True)
     locked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+    __table_args__ = (
+        CheckConstraint(
+            "(photo IS NULL) = (number IS NULL) AND (photo IS NOT NULL OR label IS NOT NULL)",
+            name="ck_masks_photo_or_name",
+        ),
+    )
 
 
 class Vote(Base):

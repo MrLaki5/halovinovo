@@ -45,7 +45,13 @@ async def close_voting_if_due(db: AsyncSession) -> None:
 
 
 async def list_masks(db: AsyncSession) -> List[Mask]:
-    res = await db.execute(select(Mask).order_by(Mask.number))
+    """The gallery: guests with a costume photo."""
+    res = await db.execute(select(Mask).where(Mask.photo.is_not(None)).order_by(Mask.number))
+    return list(res.scalars().all())
+
+
+async def list_name_only_voters(db: AsyncSession) -> List[Mask]:
+    res = await db.execute(select(Mask).where(Mask.photo.is_(None)).order_by(Mask.id))
     return list(res.scalars().all())
 
 
@@ -61,6 +67,14 @@ async def create_mask(db: AsyncSession, *, photo: str, label: Optional[str]) -> 
     db.add(mask)
     await db.flush()
     return mask
+
+
+async def create_name_only_voter(db: AsyncSession, *, name: str) -> Mask:
+    """A guest without a costume: they get a ticket but stay out of the gallery."""
+    voter = Mask(label=name, ticket=new_ticket())
+    db.add(voter)
+    await db.flush()
+    return voter
 
 
 async def delete_mask(db: AsyncSession, mask_id: int) -> Optional[Mask]:
@@ -168,7 +182,7 @@ async def replace_winners(db: AsyncSession, winners: Sequence[dict]) -> None:
 
 async def reset_contest(db: AsyncSession) -> List[str]:
     """Wipe everything and restore default settings. Returns the photo files to delete."""
-    res = await db.execute(select(Mask.photo))
+    res = await db.execute(select(Mask.photo).where(Mask.photo.is_not(None)))
     photos = list(res.scalars().all())
 
     # Winners, votes and guest sessions all go with the masks

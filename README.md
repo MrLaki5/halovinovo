@@ -49,6 +49,8 @@ Data lives in `./db_persist_data` (Postgres) and `./uploads` (mask photos).
 1. **Check-in:** on the Check-in tab, take a photo of each mask and tap *Add to gallery*.
    The guest's voting QR opens right away; they scan it with their phone camera. Tap any
    photo in the gallery to show its QR again later.
+   Guests without a costume go under *Voters without a mask*: type their name and tap
+   *Create voting link* to get a QR they can vote with.
 2. **Voting:** on Settings, set *Voting closes at* and save. A future close time opens voting.
 3. **Final:** voting closes by itself at that time, or tap *End voting now*. Guests see the finalists.
 4. **Winners:** after the live final, fill in the Winners tab and *Publish winners*.
@@ -66,5 +68,6 @@ Data lives in `./db_persist_data` (Postgres) and `./uploads` (mask photos).
 - **Lost phone or cleared browser:** open the guest's QR from the gallery and tap *Issue new
   code*. The old phone stops voting, and the guest's votes and lock carry over to the new one.
 - **No self-votes:** a guest can't vote for their own mask.
+- **Voters without a mask** vote like anyone else but aren't in the gallery, so nobody can vote for them.
 - **Deleting a mask** also deletes the votes that guest cast.
 - **Live updates** use polling every 3 s.

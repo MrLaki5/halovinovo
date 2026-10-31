@@ -13,7 +13,7 @@ from orm import crud
 from orm.database import get_db
 from orm.models import Mask
 from photos import delete_photos, detect_extension, save_photo
-from schema import AdminState, LoginRequest, SettingsUpdate, WinnersUpdate
+from schema import AdminState, LoginRequest, SettingsUpdate, VoterCreate, WinnersUpdate
 from sqlalchemy.ext.asyncio import AsyncSession
 from state import build_admin_state
 
@@ -88,7 +88,16 @@ async def remove_mask(mask_id: int, db: AsyncSession = Depends(get_db)):
     if mask is None:
         raise HTTPException(status_code=404, detail="Mask not found")
     await db.commit()
-    delete_photos([mask.photo])
+    if mask.photo is not None:
+        delete_photos([mask.photo])
+    return await build_admin_state(db)
+
+
+@router.post("/voters", response_model=AdminState)
+async def add_name_only_voter(req: VoterCreate, db: AsyncSession = Depends(get_db)):
+    """A voting ticket for a guest without a costume. Managed through the /masks/{id} routes."""
+    await crud.create_name_only_voter(db, name=req.name)
+    await db.commit()
     return await build_admin_state(db)
 
 
