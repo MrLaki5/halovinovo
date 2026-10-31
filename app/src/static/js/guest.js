@@ -2,6 +2,7 @@ import {
   api, formatDuration, h, icons, latestOnly, maskNum, msUntil, photoHTML, podiumHTML,
   poll, serverNow, setPartyName, showStatus, syncClock, syncList,
 } from './common.js';
+import { downloadCostumesPdf } from './pdf.js';
 
 const $ = (id) => document.getElementById(id);
 const NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five'];
@@ -203,6 +204,25 @@ function renderFinal() {
     },
   );
 }
+
+// ---- PDF ---------------------------------------------------------------
+
+document.querySelectorAll('[data-download-pdf]').forEach((button) => {
+  const label = button.textContent;
+  button.addEventListener('click', async () => {
+    button.disabled = true;
+    button.textContent = 'Preparing PDF…';
+    try {
+      await downloadCostumesPdf(state);
+      button.textContent = label;
+    } catch (e) {
+      console.error(e);
+      button.textContent = 'Couldn\'t make the PDF. Try again';
+    } finally {
+      button.disabled = false;
+    }
+  });
+});
 
 // ---- podium ------------------------------------------------------------
 
