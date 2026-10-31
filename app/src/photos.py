@@ -1,4 +1,4 @@
-"""Mask photo files on disk. nginx serves UPLOAD_DIR at /uploads/."""
+"""Mask photo files on disk, served at /uploads/ by main.py."""
 
 import uuid
 from pathlib import Path

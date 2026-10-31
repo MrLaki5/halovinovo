@@ -4,7 +4,7 @@ Mobile web app for one party: the host photographs each mask on arrival, guests 
 their phones (no login), the top N go to a live final, and the host publishes the podium.
 Behaviour spec and designs are in [specs/](specs/).
 
-Stack: FastAPI + Postgres + nginx (TLS, serves photos) via Docker Compose. Frontend is plain
+Stack: FastAPI + Postgres via Docker Compose, exposed through a Cloudflare Tunnel. Frontend is plain
 HTML/CSS/JS in [app/src/static/](app/src/static/).
 
 ## Screenshots
@@ -30,11 +30,17 @@ cp .example.env .env      # set ADMIN_USERNAME, ADMIN_PASSWORD, SESSION_SECRET_K
 docker compose up -d --build
 ```
 
-- Guests: `https://<host>/`
-- Host: `https://<host>/admin`
+The app listens on `127.0.0.1:8013` only. Locally, open `http://localhost:8013/` (guests) and
+`http://localhost:8013/admin` (host).
 
-With `PROD=false` nginx uses a self-signed certificate. For a real domain set `PROD=true` and
-replace `example.com` in `nginx/letsencrypt_cert_gen.sh` and `nginx/nginx_letsencrypt.conf`.
+## Deploy
+
+Cloudflare terminates TLS and `cloudflared` on the host forwards to the app, so there is no
+port forwarding or certificate to manage. [deployment.md](deployment.md) sets it up on a clean
+Raspberry Pi, from Docker to the tunnel.
+
+- Guests: `https://halovinovo.mementoweb.cc/`
+- Host: `https://halovinovo.mementoweb.cc/admin`
 
 Data lives in `./db_persist_data` (Postgres) and `./uploads` (mask photos).
 
