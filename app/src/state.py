@@ -6,7 +6,7 @@ from typing import Optional
 from orm import crud
 from orm.models import ContestSettings, Mask
 from photos import photo_url
-from schema import AdminMaskOut, AdminState, GuestState, MaskOut, WinnerOut
+from schema import AdminMaskOut, AdminState, AdminVoterOut, GuestState, MaskOut, WinnerOut
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -92,6 +92,12 @@ async def build_admin_state(db: AsyncSession) -> AdminState:
         **contest_fields(contest),
         masks=[out(m) for m in masks],
         finalists=[out(m) for m in finalists],
+        voters=[
+            AdminVoterOut(
+                id=v.id, name=v.label, ticket=v.ticket, ticket_claimed=v.session is not None
+            )
+            for v in await crud.list_name_only_voters(db)
+        ],
         winners=await build_winners(db),
         next_mask_number=contest.next_mask_number,
         voters_count=await crud.count_voters(db),

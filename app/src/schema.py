@@ -31,6 +31,15 @@ class AdminMaskOut(MaskOut):
     ticket_claimed: bool
 
 
+class AdminVoterOut(BaseModel):
+    """A guest who votes without a costume in the gallery."""
+
+    id: int
+    name: str
+    ticket: str
+    ticket_claimed: bool
+
+
 class WinnerOut(BaseModel):
     place: int
     name: str
@@ -61,6 +70,7 @@ class GuestState(ContestOut):
 class AdminState(ContestOut):
     masks: List[AdminMaskOut]
     finalists: List[AdminMaskOut]
+    voters: List[AdminVoterOut]
     winners: List[WinnerOut]
     next_mask_number: int
     voters_count: int
@@ -84,6 +94,15 @@ class SettingsUpdate(BaseModel):
         if value is not None and value.tzinfo is None:
             return value.replace(tzinfo=timezone.utc)
         return value
+
+
+class VoterCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=80)
+
+    @field_validator("name", mode="before")
+    @classmethod
+    def strip_name(cls, value):
+        return value.strip() if isinstance(value, str) else value
 
 
 class WinnerIn(BaseModel):

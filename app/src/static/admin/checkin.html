@@ -78,6 +78,20 @@
       <p id="gallery-empty" class="empty" hidden>No masks yet. Take a photo above to add the first one.</p>
       <div class="admin-grid" id="gallery"></div>
     </section>
+
+    <section class="panel" aria-labelledby="voters-h">
+      <div class="gallery-head">
+        <h2 id="voters-h" class="section-title">Voters without a mask</h2>
+        <span class="muted">Guests who vote but aren't in the gallery. Tap a name to show their voting QR.</span>
+      </div>
+      <form class="field" id="voter-form" novalidate>
+        <label for="voter-name" class="field-label">Name</label>
+        <input id="voter-name" class="input" type="text" maxlength="80" placeholder="e.g. Ana" autocomplete="off">
+        <button type="submit" class="btn btn-light" id="voter-add-btn" disabled>Create voting link</button>
+      </form>
+      <p id="voter-status" class="status" hidden></p>
+      <ul class="voter-list" id="voters"></ul>
+    </section>
   </main>
 
   <nav aria-label="Host" class="tabbar">

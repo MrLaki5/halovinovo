@@ -73,9 +73,8 @@ async def claim_ticket(
 
     current = await crud.get_mask_by_session(db, session) if session else None
     if current is not None:
-        raise HTTPException(
-            status_code=409, detail=f"This phone already votes as #{current.number:02d}."
-        )
+        who = current.label if current.number is None else f"#{current.number:02d}"
+        raise HTTPException(status_code=409, detail=f"This phone already votes as {who}.")
 
     mask.session = secrets.token_urlsafe(32)
     await db.commit()
@@ -96,7 +95,8 @@ async def cast_vote(mask_id: int, request: Request, db: AsyncSession = Depends(g
 
     if mask_id == me.id:
         raise HTTPException(status_code=409, detail="You can't vote for your own mask")
-    if await db.get(Mask, mask_id) is None:
+    target = await db.get(Mask, mask_id)
+    if target is None or target.photo is None:
         raise HTTPException(status_code=404, detail="That mask is no longer in the gallery")
 
     mine = await crud.voter_mask_ids(db, me.id)

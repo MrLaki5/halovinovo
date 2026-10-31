@@ -40,6 +40,7 @@ function render() {
 
   $('gallery-empty').hidden = state.masks.length > 0;
   syncList($('gallery'), state.masks, (m) => m.id, createTile, updateTile);
+  syncList($('voters'), state.voters, (v) => v.id, createVoterRow, updateVoterRow);
   syncTicketSheet?.();
 }
 
@@ -84,7 +85,75 @@ function updateTile(el, mask) {
   );
 }
 
+// ---- voters without a mask ---------------------------------------------
+
+function createVoterRow(voter) {
+  const el = h(`
+    <li class="voter-row">
+      <button type="button" class="voter-open"><span class="voter-name"></span><span class="qr-state"></span></button>
+      <button type="button" class="icon-btn">${icons.trash()}</button>
+    </li>`);
+  el.querySelector('.voter-open').addEventListener('click', () => showTicket(voter.id));
+  el.querySelector('.icon-btn').addEventListener('click', () => removeVoter(voter));
+  return el;
+}
+
+function updateVoterRow(el, voter) {
+  el.querySelector('.voter-name').textContent = voter.name;
+  const ticketState = el.querySelector('.qr-state');
+  ticketState.classList.toggle('is-claimed', voter.ticket_claimed);
+  ticketState.innerHTML = voter.ticket_claimed ? `${icons.check(14)} Scanned` : `${icons.qr(14)} Not scanned`;
+  el.querySelector('.voter-open').setAttribute(
+    'aria-label',
+    `Voting QR for ${voter.name}, ${voter.ticket_claimed ? 'scanned' : 'not scanned yet'}`,
+  );
+  el.querySelector('.icon-btn').setAttribute('aria-label', `Remove ${voter.name}`);
+}
+
+async function removeVoter(voter) {
+  const ok = await confirmSheet({
+    title: `Remove ${voter.name}?`,
+    body: ['Their voting link stops working and every vote they cast is deleted.'],
+    confirm: 'Yes, remove them',
+  });
+  if (!ok) return;
+
+  try {
+    await load(api('DELETE', `/api/admin/masks/${voter.id}`));
+    showStatus($('voter-status'), `Removed ${voter.name}.`);
+  } catch (e) {
+    showStatus($('voter-status'), e.message, true);
+  }
+}
+
+$('voter-name').addEventListener('input', (e) => {
+  $('voter-add-btn').disabled = !e.target.value.trim();
+});
+
+$('voter-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = $('voter-name').value.trim();
+  if (!name) return;
+
+  const button = $('voter-add-btn');
+  button.disabled = true;
+  try {
+    const next = await load(api('POST', '/api/admin/voters', { name }));
+    showStatus($('voter-status'), `${name}'s voting link is ready.`);
+    $('voter-name').value = '';
+    const added = next?.voters.at(-1);
+    if (added) showTicket(added.id);
+  } catch (err) {
+    showStatus($('voter-status'), err.message, true);
+    button.disabled = false;
+  }
+});
+
 // ---- tickets -----------------------------------------------------------
+
+// A gallery mask or a voter without one; both hold a ticket
+const findGuest = (id) => state.masks.find((m) => m.id === id) ?? state.voters.find((v) => v.id === id);
+const guestName = (guest) => (guest.number ? maskNum(guest.number) : guest.name);
 
 const ticketLink = (mask) => `${location.origin}/?ticket=${encodeURIComponent(mask.ticket)}`;
 
@@ -107,7 +176,7 @@ function ticketBodyHTML(mask) {
       <p>Ask the guest to scan this with their phone camera. It works on one phone only.</p>
     </div>
     <div class="qr">
-      <img src="/api/admin/masks/${mask.id}/qr.svg?v=${encodeURIComponent(mask.ticket)}" alt="Voting QR code for mask ${maskNum(mask.number)}">
+      <img src="/api/admin/masks/${mask.id}/qr.svg?v=${encodeURIComponent(mask.ticket)}" alt="Voting QR code for ${esc(guestName(mask))}">
       <span class="qr-state">Waiting for the guest to scan</span>
     </div>
     <div class="btn-stack">
@@ -117,15 +186,15 @@ function ticketBodyHTML(mask) {
 }
 
 function showTicket(maskId) {
-  const mask = state.masks.find((m) => m.id === maskId);
+  const mask = findGuest(maskId);
   if (!mask) return;
 
-  const content = h(`<div class="ticket-body"><h2>Ticket for ${esc(maskNum(mask.number))}</h2><div class="ticket-body"></div></div>`);
+  const content = h(`<div class="ticket-body"><h2>Ticket for ${esc(guestName(mask))}</h2><div class="ticket-body"></div></div>`);
   const body = content.lastElementChild;
   let shown = null;
 
   syncTicketSheet = () => {
-    const current = state.masks.find((m) => m.id === maskId);
+    const current = findGuest(maskId);
     if (!current) return;
     const key = `${current.ticket}:${current.ticket_claimed}`;
     if (key === shown) return;
@@ -143,7 +212,7 @@ function showTicket(maskId) {
   body.addEventListener('click', async (e) => {
     const button = e.target.closest('[data-action]');
     if (!button) return;
-    const current = state.masks.find((m) => m.id === maskId);
+    const current = findGuest(maskId);
 
     if (button.dataset.action === 'copy') {
       try {
