@@ -10,10 +10,8 @@ const GAP = 12;
 const HEADER_H = 100;
 const FOOTER_H = 18;
 const CARD_W = (PAGE_W - 2 * MARGIN - (COLS - 1) * GAP) / COLS;
-// Square, like the host gallery, so three rows fit on every page
-const PHOTO_H = CARD_W;
-const CARD_H = PHOTO_H + 42;
-const PLACE_LABEL = { 1: '1st place', 2: '2nd place', 3: '3rd place' };
+// Square, like the host gallery
+const CARD_H = CARD_W;
 const FONT = '"Bricolage Grotesque", system-ui, sans-serif';
 const MONO = '"JetBrains Mono", ui-monospace, monospace';
 
@@ -56,14 +54,9 @@ function drawHeader(ctx, c, state, count) {
   ctx.font = `800 34px ${FONT}`;
   ctx.fillText(fit(ctx, state.party_name, PAGE_W - 2 * MARGIN), MARGIN, MARGIN + 46);
 
-  const finalists = state.finalists.length;
   ctx.fillStyle = c.muted;
   ctx.font = `400 12px ${FONT}`;
-  ctx.fillText(
-    `${count} costume${count === 1 ? '' : 's'}${finalists ? ` · ${finalists} finalist${finalists === 1 ? '' : 's'}` : ''}`,
-    MARGIN,
-    MARGIN + 68,
-  );
+  ctx.fillText(`${count} costume${count === 1 ? '' : 's'}`, MARGIN, MARGIN + 68);
 }
 
 function drawFooter(ctx, c, state, page, pages) {
@@ -77,32 +70,25 @@ function drawFooter(ctx, c, state, page, pages) {
   ctx.textAlign = 'left';
 }
 
-function drawCard(ctx, c, mask, img, x, y, { finalist, winner }) {
-  const accent = winner ? { 1: c.accent, 2: c.silver, 3: c.bronze }[winner.place] : finalist ? c.accent : null;
-
-  ctx.beginPath();
-  ctx.roundRect(x, y, CARD_W, CARD_H, 12);
-  ctx.fillStyle = c.surface;
-  ctx.fill();
-
+function drawCard(ctx, c, mask, img, x, y) {
   ctx.save();
   ctx.beginPath();
-  ctx.roundRect(x, y, CARD_W, PHOTO_H, [12, 12, 0, 0]);
+  ctx.roundRect(x, y, CARD_W, CARD_H, 12);
   ctx.clip();
   ctx.fillStyle = c.raised;
-  ctx.fillRect(x, y, CARD_W, PHOTO_H);
+  ctx.fillRect(x, y, CARD_W, CARD_H);
   if (img) {
-    const s = Math.max(CARD_W / img.naturalWidth, PHOTO_H / img.naturalHeight);
+    const s = Math.max(CARD_W / img.naturalWidth, CARD_H / img.naturalHeight);
     const w = img.naturalWidth * s;
     const h = img.naturalHeight * s;
-    ctx.drawImage(img, x + (CARD_W - w) / 2, y + (PHOTO_H - h) / 2, w, h);
+    ctx.drawImage(img, x + (CARD_W - w) / 2, y + (CARD_H - h) / 2, w, h);
   }
   ctx.restore();
 
   ctx.beginPath();
   ctx.roundRect(x, y, CARD_W, CARD_H, 12);
-  ctx.lineWidth = accent ? 2 : 1;
-  ctx.strokeStyle = accent || c.border;
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = c.border;
   ctx.stroke();
 
   // Number badge, as on the website
@@ -116,27 +102,6 @@ function drawCard(ctx, c, mask, img, x, y, { finalist, winner }) {
   ctx.fillStyle = c.text;
   ctx.textBaseline = 'middle';
   ctx.fillText(num, x + 12, y + 16);
-
-  const footY = y + PHOTO_H + 15;
-  const inner = CARD_W - 20;
-  if (mask.votes !== null && mask.votes !== undefined) {
-    ctx.fillStyle = c.muted;
-    ctx.font = `700 10px ${MONO}`;
-    ctx.fillText(`${mask.votes} vote${mask.votes === 1 ? '' : 's'}`, x + 10, footY);
-  }
-  const tag = winner ? PLACE_LABEL[winner.place] : finalist ? 'Finalist' : '';
-  if (tag) {
-    ctx.fillStyle = winner?.place === 2 ? c.silver : winner?.place === 3 ? c.bronzeText : c.accentText;
-    ctx.font = `600 10px ${FONT}`;
-    ctx.textAlign = 'right';
-    ctx.fillText(tag, x + CARD_W - 10, footY);
-    ctx.textAlign = 'left';
-  }
-  if (winner) {
-    ctx.fillStyle = c.text;
-    ctx.font = `800 12px ${FONT}`;
-    ctx.fillText(fit(ctx, winner.name, inner), x + 10, footY + 15);
-  }
 }
 
 // Minimal PDF: one full-page JPEG per page
@@ -184,9 +149,8 @@ function buildPdf(jpegs) {
 
 export async function downloadCostumesPdf(state) {
   const c = {
-    bg: token('--bg'), surface: token('--surface'), raised: token('--raised'), border: token('--border-strong'),
-    text: token('--text'), muted: token('--muted'), faint: token('--faint'), accent: token('--accent'),
-    accentText: token('--accent-text'), silver: token('--silver'), bronze: token('--bronze'), bronzeText: token('--bronze-text'),
+    bg: token('--bg'), raised: token('--raised'), border: token('--border-strong'),
+    text: token('--text'), muted: token('--muted'), faint: token('--faint'), accentText: token('--accent-text'),
   };
   // Canvas text silently falls back to a system font if the web font isn't loaded yet
   await Promise.all([
@@ -197,8 +161,6 @@ export async function downloadCostumesPdf(state) {
 
   const masks = state.masks;
   const images = await Promise.all(masks.map((m) => loadImage(m.photo_url)));
-  const finalistIds = new Set(state.finalists.map((m) => m.id));
-  const winners = new Map(state.winners.map((w) => [w.mask.id, w]));
 
   const pages = paginate(masks.length);
   const jpegs = [];
@@ -215,13 +177,9 @@ export async function downloadCostumesPdf(state) {
     const top = p === 0 ? MARGIN + HEADER_H : MARGIN;
     if (p === 0) drawHeader(ctx, c, state, masks.length);
     for (let i = 0; i < pages[p]; i++, index++) {
-      const mask = masks[index];
       const x = MARGIN + (i % COLS) * (CARD_W + GAP);
       const y = top + Math.floor(i / COLS) * (CARD_H + GAP);
-      drawCard(ctx, c, mask, images[index], x, y, {
-        finalist: finalistIds.has(mask.id),
-        winner: winners.get(mask.id),
-      });
+      drawCard(ctx, c, masks[index], images[index], x, y);
     }
     drawFooter(ctx, c, state, p + 1, pages.length);
 
